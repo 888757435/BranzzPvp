@@ -1,0 +1,666 @@
+-- Serviços
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+
+-- Player local
+local player = Players.LocalPlayer
+local mouse = player:GetMouse()
+
+-- Variáveis globais
+local savedPosition = nil
+local expandHitboxEnabled = false
+local espEnabled = false
+local hitboxSize = 5
+local connections = {}
+
+-- GUI Principal
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "DraggableGUI"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+ScreenGui.DisplayOrder = 999
+
+-- Frame principal
+local MainFrame = Instance.new("Frame")
+MainFrame.Name = "MainFrame"
+MainFrame.Size = UDim2.new(0, 350, 0, 400)
+MainFrame.Position = UDim2.new(0.5, -175, 0.5, -200)
+MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
+MainFrame.BorderSizePixel = 0
+MainFrame.ClipsDescendants = true
+
+-- Efeito de sombra
+local UICorner = Instance.new("UICorner")
+UICorner.CornerRadius = UDim.new(0, 8)
+UICorner.Parent = MainFrame
+
+local UIStroke = Instance.new("UIStroke")
+UIStroke.Color = Color3.fromRGB(60, 60, 80)
+UIStroke.Thickness = 2
+UIStroke.Parent = MainFrame
+
+-- Barra de título
+local TitleBar = Instance.new("Frame")
+TitleBar.Name = "TitleBar"
+TitleBar.Size = UDim2.new(1, 0, 0, 40)
+TitleBar.BackgroundColor3 = Color3.fromRGB(40, 40, 55)
+TitleBar.BorderSizePixel = 0
+
+local TitleBarCorner = Instance.new("UICorner")
+TitleBarCorner.CornerRadius = UDim.new(0, 8, 0, 0)
+TitleBarCorner.Parent = TitleBar
+
+-- Título
+local Title = Instance.new("TextLabel")
+Title.Name = "Title"
+Title.Size = UDim2.new(0, 150, 1, 0)
+Title.Position = UDim2.new(0, 10, 0, 0)
+Title.BackgroundTransparency = 1
+Title.Text = "GUI Avançada"
+Title.TextColor3 = Color3.fromRGB(220, 220, 255)
+Title.TextSize = 16
+Title.Font = Enum.Font.GothamBold
+Title.TextXAlignment = Enum.TextXAlignment.Left
+
+-- Botões da barra de título
+local ButtonContainer = Instance.new("Frame")
+ButtonContainer.Name = "ButtonContainer"
+ButtonContainer.Size = UDim2.new(0, 90, 1, 0)
+ButtonContainer.Position = UDim2.new(1, -100, 0, 0)
+ButtonContainer.BackgroundTransparency = 1
+
+-- Botão minimizar
+local MinimizeButton = Instance.new("TextButton")
+MinimizeButton.Name = "MinimizeButton"
+MinimizeButton.Size = UDim2.new(0, 25, 0, 25)
+MinimizeButton.Position = UDim2.new(0, 0, 0.5, -12.5)
+MinimizeButton.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
+MinimizeButton.Text = "_"
+MinimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+MinimizeButton.TextSize = 14
+MinimizeButton.Font = Enum.Font.GothamBold
+
+local MinimizeCorner = Instance.new("UICorner")
+MinimizeCorner.CornerRadius = UDim.new(0, 4)
+MinimizeCorner.Parent = MinimizeButton
+
+-- Botão maximizar
+local MaximizeButton = Instance.new("TextButton")
+MaximizeButton.Name = "MaximizeButton"
+MaximizeButton.Size = UDim2.new(0, 25, 0, 25)
+MaximizeButton.Position = UDim2.new(0, 35, 0.5, -12.5)
+MaximizeButton.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
+MaximizeButton.Text = "□"
+MaximizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+MaximizeButton.TextSize = 14
+MaximizeButton.Font = Enum.Font.GothamBold
+
+local MaximizeCorner = Instance.new("UICorner")
+MaximizeCorner.CornerRadius = UDim.new(0, 4)
+MaximizeCorner.Parent = MaximizeButton
+
+-- Botão fechar
+local CloseButton = Instance.new("TextButton")
+CloseButton.Name = "CloseButton"
+CloseButton.Size = UDim2.new(0, 25, 0, 25)
+CloseButton.Position = UDim2.new(0, 70, 0.5, -12.5)
+CloseButton.BackgroundColor3 = Color3.fromRGB(200, 60, 60)
+CloseButton.Text = "X"
+CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseButton.TextSize = 14
+CloseButton.Font = Enum.Font.GothamBold
+
+local CloseCorner = Instance.new("UICorner")
+CloseCorner.CornerRadius = UDim.new(0, 4)
+CloseCorner.Parent = CloseButton
+
+-- Conteúdo com scroll
+local ScrollFrame = Instance.new("ScrollingFrame")
+ScrollFrame.Name = "ScrollFrame"
+ScrollFrame.Size = UDim2.new(1, 0, 1, -40)
+ScrollFrame.Position = UDim2.new(0, 0, 0, 40)
+ScrollFrame.BackgroundTransparency = 1
+ScrollFrame.ScrollBarThickness = 6
+ScrollFrame.ScrollBarImageColor3 = Color3.fromRGB(60, 60, 80)
+ScrollFrame.CanvasSize = UDim2.new(0, 0, 0, 600)
+ScrollFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
+
+local UIListLayout = Instance.new("UIListLayout")
+UIListLayout.Padding = UDim.new(0, 10)
+UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+
+-- Função para criar seções
+local function createSection(title, height)
+	local section = Instance.new("Frame")
+	section.Name = title .. "Section"
+	section.Size = UDim2.new(0.9, 0, 0, height)
+	section.BackgroundColor3 = Color3.fromRGB(40, 40, 55)
+	section.BorderSizePixel = 0
+	
+	local corner = Instance.new("UICorner")
+	corner.CornerRadius = UDim.new(0, 6)
+	corner.Parent = section
+	
+	local stroke = Instance.new("UIStroke")
+	stroke.Color = Color3.fromRGB(60, 60, 80)
+	stroke.Thickness = 1
+	stroke.Parent = section
+	
+	local titleLabel = Instance.new("TextLabel")
+	titleLabel.Name = "Title"
+	titleLabel.Size = UDim2.new(1, 0, 0, 30)
+	titleLabel.Position = UDim2.new(0, 0, 0, 0)
+	titleLabel.BackgroundTransparency = 1
+	titleLabel.Text = title
+	titleLabel.TextColor3 = Color3.fromRGB(220, 220, 255)
+	titleLabel.TextSize = 14
+	titleLabel.Font = Enum.Font.GothamBold
+	
+	return section, titleLabel
+end
+
+-- Seção de Posição
+local positionSection, positionTitle = createSection("Controle de Posição", 150)
+positionTitle.Parent = positionSection
+
+-- Botão Marcar Posição
+local MarkButton = Instance.new("TextButton")
+MarkButton.Name = "MarkButton"
+MarkButton.Size = UDim2.new(0.9, 0, 0, 30)
+MarkButton.Position = UDim2.new(0.05, 0, 0, 40)
+MarkButton.BackgroundColor3 = Color3.fromRGB(70, 120, 200)
+MarkButton.Text = "Marcar Posição"
+MarkButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+MarkButton.TextSize = 14
+MarkButton.Font = Enum.Font.Gotham
+
+local MarkCorner = Instance.new("UICorner")
+MarkCorner.CornerRadius = UDim.new(0, 6)
+MarkCorner.Parent = MarkButton
+
+-- Botão Limpar Posição
+local ClearButton = Instance.new("TextButton")
+ClearButton.Name = "ClearButton"
+ClearButton.Size = UDim2.new(0.9, 0, 0, 30)
+ClearButton.Position = UDim2.new(0.05, 0, 0, 80)
+ClearButton.BackgroundColor3 = Color3.fromRGB(200, 120, 70)
+ClearButton.Text = "Limpar Posição"
+ClearButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+ClearButton.TextSize = 14
+ClearButton.Font = Enum.Font.Gotham
+
+local ClearCorner = Instance.new("UICorner")
+ClearCorner.CornerRadius = UDim.new(0, 6)
+ClearCorner.Parent = ClearButton
+
+-- Botão Teleportar
+local TPButton = Instance.new("TextButton")
+TPButton.Name = "TPButton"
+TPButton.Size = UDim2.new(0.9, 0, 0, 30)
+TPButton.Position = UDim2.new(0.05, 0, 0, 120)
+TPButton.BackgroundColor3 = Color3.fromRGB(70, 200, 120)
+TPButton.Text = "Teleportar para Posição"
+TPButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+TPButton.TextSize = 14
+TPButton.Font = Enum.Font.Gotham
+
+local TPCorner = Instance.new("UICorner")
+TPCorner.CornerRadius = UDim.new(0, 6)
+TPCorner.Parent = TPButton
+
+-- Status da Posição
+local PositionStatus = Instance.new("TextLabel")
+PositionStatus.Name = "PositionStatus"
+PositionStatus.Size = UDim2.new(0.9, 0, 0, 20)
+PositionStatus.Position = UDim2.new(0.05, 0, 0, 155)
+PositionStatus.BackgroundTransparency = 1
+PositionStatus.Text = "Nenhuma posição marcada"
+PositionStatus.TextColor3 = Color3.fromRGB(180, 180, 200)
+PositionStatus.TextSize = 12
+PositionStatus.Font = Enum.Font.Gotham
+
+-- Seção Expansão de Hitbox
+local hitboxSection, hitboxTitle = createSection("Expansão de Hitbox", 120)
+hitboxTitle.Parent = hitboxSection
+
+-- Campo de entrada para tamanho
+local SizeInput = Instance.new("TextBox")
+SizeInput.Name = "SizeInput"
+SizeInput.Size = UDim2.new(0.6, 0, 0, 30)
+SizeInput.Position = UDim2.new(0.05, 0, 0, 40)
+SizeInput.BackgroundColor3 = Color3.fromRGB(50, 50, 65)
+SizeInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+SizeInput.Text = "5"
+SizeInput.TextSize = 14
+SizeInput.Font = Enum.Font.Gotham
+SizeInput.PlaceholderText = "Tamanho da hitbox"
+
+local SizeInputCorner = Instance.new("UICorner")
+SizeInputCorner.CornerRadius = UDim.new(0, 6)
+SizeInputCorner.Parent = SizeInput
+
+-- Botão Ativar Hitbox
+local HitboxButton = Instance.new("TextButton")
+HitboxButton.Name = "HitboxButton"
+HitboxButton.Size = UDim2.new(0.3, 0, 0, 30)
+HitboxButton.Position = UDim2.new(0.67, 0, 0, 40)
+HitboxButton.BackgroundColor3 = Color3.fromRGB(120, 70, 200)
+HitboxButton.Text = "OFF"
+HitboxButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+HitboxButton.TextSize = 14
+HitboxButton.Font = Enum.Font.Gotham
+
+local HitboxCorner = Instance.new("UICorner")
+HitboxCorner.CornerRadius = UDim.new(0, 6)
+HitboxCorner.Parent = HitboxButton
+
+-- Seção ESP Linhas
+local espSection, espTitle = createSection("ESP Linhas", 80)
+espTitle.Parent = espSection
+
+-- Botão ESP
+local ESPButton = Instance.new("TextButton")
+ESPButton.Name = "ESPButton"
+ESPButton.Size = UDim2.new(0.9, 0, 0, 30)
+ESPButton.Position = UDim2.new(0.05, 0, 0, 40)
+ESPButton.BackgroundColor3 = Color3.fromRGB(200, 70, 120)
+ESPButton.Text = "ESP Linhas: OFF"
+ESPButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+ESPButton.TextSize = 14
+ESPButton.Font = Enum.Font.Gotham
+
+local ESPCorner = Instance.new("UICorner")
+ESPCorner.CornerRadius = UDim.new(0, 6)
+ESPCorner.Parent = ESPButton
+
+-- Montar a GUI
+ButtonContainer.Parent = TitleBar
+MinimizeButton.Parent = ButtonContainer
+MaximizeButton.Parent = ButtonContainer
+CloseButton.Parent = ButtonContainer
+Title.Parent = TitleBar
+TitleBar.Parent = MainFrame
+
+MarkButton.Parent = positionSection
+ClearButton.Parent = positionSection
+TPButton.Parent = positionSection
+PositionStatus.Parent = positionSection
+
+SizeInput.Parent = hitboxSection
+HitboxButton.Parent = hitboxSection
+
+ESPButton.Parent = espSection
+
+positionSection.Parent = ScrollFrame
+hitboxSection.Parent = ScrollFrame
+espSection.Parent = ScrollFrame
+
+UIListLayout.Parent = ScrollFrame
+ScrollFrame.Parent = MainFrame
+MainFrame.Parent = ScreenGui
+ScreenGui.Parent = player:WaitForChild("PlayerGui")
+
+-- Variáveis de arrasto
+local dragging = false
+local dragInput, dragStart, startPos
+
+-- Função de arrasto da GUI
+local function updateInput(input)
+	if dragging then
+		local delta = input.Position - dragStart
+		MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+	end
+end
+
+TitleBar.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = true
+		dragStart = input.Position
+		startPos = MainFrame.Position
+		
+		input.Changed:Connect(function()
+			if input.UserInputState == Enum.UserInputState.End then
+				dragging = false
+			end
+		end)
+	end
+end)
+
+TitleBar.InputChanged:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseMovement then
+		dragInput = input
+	end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+	if input == dragInput and dragging then
+		updateInput(input)
+	end
+end)
+
+-- Funções dos botões da barra de título
+local minimized = false
+local maximized = false
+local originalSize = MainFrame.Size
+local originalPosition = MainFrame.Position
+
+MinimizeButton.MouseButton1Click:Connect(function()
+	minimized = not minimized
+	if minimized then
+		TweenService:Create(ScrollFrame, TweenInfo.new(0.3), {Size = UDim2.new(1, 0, 0, 0)}):Play()
+		TweenService:Create(MainFrame, TweenInfo.new(0.3), {Size = UDim2.new(MainFrame.Size.X.Scale, MainFrame.Size.X.Offset, 0, 40)}):Play()
+		MinimizeButton.Text = "+"
+	else
+		TweenService:Create(ScrollFrame, TweenInfo.new(0.3), {Size = UDim2.new(1, 0, 1, -40)}):Play()
+		TweenService:Create(MainFrame, TweenInfo.new(0.3), {Size = originalSize}):Play()
+		MinimizeButton.Text = "_"
+	end
+end)
+
+MaximizeButton.MouseButton1Click:Connect(function()
+	maximized = not maximized
+	if maximized then
+		originalSize = MainFrame.Size
+		originalPosition = MainFrame.Position
+		TweenService:Create(MainFrame, TweenInfo.new(0.3), {
+			Size = UDim2.new(1, -40, 1, -40),
+			Position = UDim2.new(0, 20, 0, 20)
+		}):Play()
+	else
+		TweenService:Create(MainFrame, TweenInfo.new(0.3), {
+			Size = originalSize,
+			Position = originalPosition
+		}):Play()
+	end
+end)
+
+CloseButton.MouseButton1Click:Connect(function()
+	ScreenGui:Destroy()
+	-- Limpar todas as conexões
+	for _, connection in pairs(connections) do
+		if connection then
+			connection:Disconnect()
+		end
+	end
+end)
+
+-- Sistema de anti-lag e anti-travamento
+local function cleanupObjects()
+	for _, obj in pairs(workspace:GetChildren()) do
+		if obj.Name == "ESP_Line" or obj.Name == "Hitbox_Part" then
+			if not obj:FindFirstChild("Player") then
+				obj:Destroy()
+			end
+		end
+	end
+end
+
+-- Limpeza periódica para evitar lag
+game:GetService("RunService").Heartbeat:Connect(cleanupObjects)
+
+-- Função 1: Marcar Posição
+MarkButton.MouseButton1Click:Connect(function()
+	if savedPosition then
+		PositionStatus.Text = "Já existe uma posição marcada!"
+		PositionStatus.TextColor3 = Color3.fromRGB(255, 100, 100)
+		
+		-- Efeito visual
+		local originalColor = MarkButton.BackgroundColor3
+		TweenService:Create(MarkButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(255, 100, 100)}):Play()
+		wait(0.2)
+		TweenService:Create(MarkButton, TweenInfo.new(0.2), {BackgroundColor3 = originalColor}):Play()
+		return
+	end
+	
+	local character = player.Character
+	if character and character:FindFirstChild("HumanoidRootPart") then
+		savedPosition = character.HumanoidRootPart.Position
+		PositionStatus.Text = string.format("Posição: (%.1f, %.1f, %.1f)", savedPosition.X, savedPosition.Y, savedPosition.Z)
+		PositionStatus.TextColor3 = Color3.fromRGB(100, 255, 100)
+		
+		-- Efeito visual
+		local originalColor = MarkButton.BackgroundColor3
+		TweenService:Create(MarkButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(100, 255, 100)}):Play()
+		wait(0.2)
+		TweenService:Create(MarkButton, TweenInfo.new(0.2), {BackgroundColor3 = originalColor}):Play()
+	end
+end)
+
+-- Função 2: Limpar Posição
+ClearButton.MouseButton1Click:Connect(function()
+	savedPosition = nil
+	PositionStatus.Text = "Posição limpa!"
+	PositionStatus.TextColor3 = Color3.fromRGB(180, 180, 200)
+	
+	-- Efeito visual
+	local originalColor = ClearButton.BackgroundColor3
+	TweenService:Create(ClearButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(100, 255, 100)}):Play()
+	wait(0.2)
+	TweenService:Create(ClearButton, TweenInfo.new(0.2), {BackgroundColor3 = originalColor}):Play()
+end)
+
+-- Função 3: Teleportar para Posição
+TPButton.MouseButton1Click:Connect(function()
+	if not savedPosition then
+		PositionStatus.Text = "Nenhuma posição marcada!"
+		PositionStatus.TextColor3 = Color3.fromRGB(255, 100, 100)
+		return
+	end
+	
+	local character = player.Character
+	if character and character:FindFirstChild("HumanoidRootPart") then
+		character.HumanoidRootPart.CFrame = CFrame.new(savedPosition)
+		PositionStatus.Text = "Teleportado!"
+		PositionStatus.TextColor3 = Color3.fromRGB(100, 200, 255)
+		
+		-- Efeito visual
+		local originalColor = TPButton.BackgroundColor3
+		TweenService:Create(TPButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(100, 200, 255)}):Play()
+		wait(0.2)
+		TweenService:Create(TPButton, TweenInfo.new(0.2), {BackgroundColor3 = originalColor}):Play()
+	end
+end)
+
+-- Função 4: Sistema de Expansão de Hitbox
+local hitboxParts = {}
+
+HitboxButton.MouseButton1Click:Connect(function()
+	expandHitboxEnabled = not expandHitboxEnabled
+	
+	if expandHitboxEnabled then
+		HitboxButton.Text = "ON"
+		HitboxButton.BackgroundColor3 = Color3.fromRGB(70, 200, 120)
+		hitboxSize = tonumber(SizeInput.Text) or 5
+		
+		-- Limpar hitboxes antigas
+		for _, part in pairs(hitboxParts) do
+			if part then
+				part:Destroy()
+			end
+		end
+		hitboxParts = {}
+		
+		-- Criar hitboxes para todos os jogadores
+		for _, otherPlayer in pairs(Players:GetPlayers()) do
+			if otherPlayer ~= player then
+				local character = otherPlayer.Character
+				if character and character:FindFirstChild("HumanoidRootPart") then
+					local hitbox = Instance.new("Part")
+					hitbox.Name = "Hitbox_Part"
+					hitbox.Size = Vector3.new(hitboxSize, hitboxSize, hitboxSize)
+					hitbox.CFrame = character.HumanoidRootPart.CFrame
+					hitbox.Anchored = true
+					hitbox.CanCollide = false
+					hitbox.Transparency = 0.7
+					hitbox.Color = Color3.fromRGB(255, 255, 255)
+					hitbox.Material = EnumMaterial.Neon
+					
+					local weld = Instance.new("Weld")
+					weld.Part0 = character.HumanoidRootPart
+					weld.Part1 = hitbox
+					weld.C0 = CFrame.new()
+					weld.Parent = hitbox
+					
+					local playerTag = Instance.new("ObjectValue")
+					playerTag.Name = "Player"
+					playerTag.Value = otherPlayer
+					playerTag.Parent = hitbox
+					
+					hitbox.Parent = workspace
+					table.insert(hitboxParts, hitbox)
+				end
+			end
+		end
+		
+		-- Conectar para novos jogadores
+		local playerAddedConnection = Players.PlayerAdded:Connect(function(newPlayer)
+			local character = newPlayer.Character or newPlayer.CharacterAdded:Wait()
+			if character:FindFirstChild("HumanoidRootPart") then
+				local hitbox = Instance.new("Part")
+				hitbox.Name = "Hitbox_Part"
+				hitbox.Size = Vector3.new(hitboxSize, hitboxSize, hitboxSize)
+				hitbox.CFrame = character.HumanoidRootPart.CFrame
+				hitbox.Anchored = true
+				hitbox.CanCollide = false
+				hitbox.Transparency = 0.7
+				hitbox.Color = Color3.fromRGB(255, 255, 255)
+				hitbox.Material = EnumMaterial.Neon
+				
+				local weld = Instance.new("Weld")
+				weld.Part0 = character.HumanoidRootPart
+				weld.Part1 = hitbox
+				weld.C0 = CFrame.new()
+				weld.Parent = hitbox
+				
+				local playerTag = Instance.new("ObjectValue")
+				playerTag.Name = "Player"
+				playerTag.Value = newPlayer
+				playerTag.Parent = hitbox
+				
+				hitbox.Parent = workspace
+				table.insert(hitboxParts, hitbox)
+			end
+		end)
+		
+		table.insert(connections, playerAddedConnection)
+		
+	else
+		HitboxButton.Text = "OFF"
+		HitboxButton.BackgroundColor3 = Color3.fromRGB(120, 70, 200)
+		
+		-- Remover todas as hitboxes
+		for _, part in pairs(hitboxParts) do
+			if part then
+				part:Destroy()
+			end
+		end
+		hitboxParts = {}
+	end
+end)
+
+-- Função 5: ESP Linhas
+local espLines = {}
+
+ESPButton.MouseButton1Click:Connect(function()
+	espEnabled = not espEnabled
+	
+	if espEnabled then
+		ESPButton.Text = "ESP Linhas: ON"
+		ESPButton.BackgroundColor3 = Color3.fromRGB(120, 200, 70)
+		
+		-- Função para criar/atualizar linhas ESP
+		local function updateESP()
+			if not espEnabled then return end
+			
+			local character = player.Character
+			if not character or not character:FindFirstChild("HumanoidRootPart") then return end
+			
+			local playerPos = character.HumanoidRootPart.Position
+			
+			-- Limpar linhas antigas
+			for _, line in pairs(espLines) do
+				if line then
+					line:Destroy()
+				end
+			end
+			espLines = {}
+			
+			-- Criar linhas para jogadores próximos
+			for _, otherPlayer in pairs(Players:GetPlayers()) do
+				if otherPlayer ~= player then
+					local otherCharacter = otherPlayer.Character
+					if otherCharacter and otherCharacter:FindFirstChild("HumanoidRootPart") then
+						local otherPos = otherCharacter.HumanoidRootPart.Position
+						local distance = (playerPos - otherPos).Magnitude
+						
+						if distance <= 50 then
+							-- Criar linha ESP
+							local line = Instance.new("Part")
+							line.Name = "ESP_Line"
+							line.Size = Vector3.new(0.2, 0.2, distance)
+							line.CFrame = CFrame.new(playerPos, otherPos) * CFrame.new(0, 0, -distance/2)
+							line.Anchored = true
+							line.CanCollide = false
+							line.Transparency = 0.3
+							line.Color = Color3.fromRGB(255, 50, 50)
+							line.Material = EnumMaterial.Neon
+							
+							local playerTag = Instance.new("ObjectValue")
+							playerTag.Name = "Player"
+							playerTag.Value = otherPlayer
+							playerTag.Parent = line
+							
+							line.Parent = workspace
+							table.insert(espLines, line)
+						end
+					end
+				end
+			end
+		end
+		
+		-- Atualizar ESP em intervalos regulares (com anti-lag)
+		local espConnection = RunService.Heartbeat:Connect(function()
+			if espEnabled then
+				updateESP()
+				-- Limpeza periódica para evitar lag
+				cleanupObjects()
+			end
+		end)
+		
+		table.insert(connections, espConnection)
+		
+	else
+		ESPButton.Text = "ESP Linhas: OFF"
+		ESPButton.BackgroundColor3 = Color3.fromRGB(200, 70, 120)
+		
+		-- Remover todas as linhas ESP
+		for _, line in pairs(espLines) do
+			if line then
+				line:Destroy()
+			end
+		end
+		espLines = {}
+	end
+end)
+
+-- Sistema de anti-lag aprimorado
+local lastCleanup = tick()
+RunService.Heartbeat:Connect(function()
+	local now = tick()
+	if now - lastCleanup > 5 then -- Limpar a cada 5 segundos
+		cleanupObjects()
+		lastCleanup = now
+	end
+	
+	-- Otimização: Limitar FPS do ESP quando ativo
+	if espEnabled then
+		wait(0.05) -- Limitar para ~20 FPS para reduzir lag
+	end
+end)
+
+-- Mensagem inicial
+print("GUI Avançada carregada com sucesso!")
+print("Sistema anti-lag ativado - Performance otimizada")
