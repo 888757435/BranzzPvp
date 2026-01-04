@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LoadString Converter | GUI Ultra Fuck</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at top left, #1a0630 0%, #0d031a 70%, #050010 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #f0e6ff;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            background: linear-gradient(145deg, rgba(140, 70, 220, 0.15) 0%, rgba(100, 40, 180, 0.1) 100%);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 
+                0 0 0 1px rgba(180, 120, 255, 0.2),
+                0 30px 80px rgba(106, 13, 173, 0.5),
+                0 15px 35px rgba(0, 0, 0, 0.4);
+            position: relative;
+            border: 1px solid rgba(200, 160, 255, 0.3);
+            z-index: 1;
+        }
+
+        /* Efeito de brilho neon */
+        .neon-glow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 0%, rgba(180, 120, 255, 0.15), transparent 70%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Efeitos de partículas avançadas */
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(2px);
+        }
+
+        .particle:nth-child(3n) {
+            background: rgba(220, 180, 255, 0.3);
+            box-shadow: 0 0 10px 2px rgba(220, 180, 255, 0.4);
+        }
+
+        .particle:nth-child(3n+1) {
+            background: rgba(180, 120, 255, 0.4);
+            box-shadow: 0 0 15px 3px rgba(180, 120, 255, 0.5);
+        }
+
+        .particle:nth-child(3n+2) {
+            background: rgba(140, 80, 220, 0.3);
+            box-shadow: 0 0 8px 1px rgba(140, 80, 220, 0.4);
+        }
+
+        .header {
+            background: linear-gradient(90deg, 
+                rgba(200, 150, 255, 0.15) 0%, 
+                rgba(160, 100, 230, 0.2) 50%, 
+                rgba(200, 150, 255, 0.15) 100%);
+            padding: 35px 40px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            animation: shine 8s infinite;
+        }
+
+        .header h1 {
+            font-size: 3.2rem;
+            background: linear-gradient(90deg, #f0d5ff, #c28cff, #a45ee5);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(180, 120, 255, 0.5);
+            letter-spacing: 1.5px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .header h1::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 10%;
+            width: 80%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #b478ff, transparent);
+            border-radius: 3px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: #e2d1ff;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .content {
+            padding: 50px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .input-section {
+            margin-bottom: 50px;
+            position: relative;
+        }
+
+        .input-label {
+            display: block;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            color: #f0e6ff;
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .input-label i {
+            color: #c28cff;
+            font-size: 1.4rem;
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            position: relative;
+        }
+
+        .input-field {
+            flex: 1;
+            padding: 22px 28px;
+            background: rgba(40, 10, 70, 0.4);
+            border: 2px solid rgba(180, 120, 255, 0.5);
+            border-radius: 18px;
+            font-size: 1.2rem;
+            color: #f5eeff;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            outline: none;
+            box-shadow: 
+                inset 0 2px 10px rgba(0, 0, 0, 0.3),
+                0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .input-field:focus {
+            border-color: #d9b8ff;
+            box-shadow: 
+                inset 0 2px 10px rgba(0, 0, 0, 0.3),
+                0 0 0 4px rgba(180, 120, 255, 0.2),
+                0 10px 30px rgba(138, 43, 226, 0.4);
+            background: rgba(50, 20, 90, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .input-field::placeholder {
+            color: #a890c8;
+            font-style: italic;
+        }
+
+        .convert-btn {
+            padding: 22px 45px;
+            background: linear-gradient(135deg, #a45ee5 0%, #8a2be2 100%);
+            border: none;
+            border-radius: 18px;
+            color: white;
+            font-size: 1.3rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 
+                0 10px 25px rgba(138, 43, 226, 0.5),
+                0 5px 15px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .convert-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.7s;
+        }
+
+        .convert-btn:hover {
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 
+                0 15px 35px rgba(138, 43, 226, 0.6),
+                0 8px 20px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            background: linear-gradient(135deg, #b478ff 0%, #9a4de8 100%);
+        }
+
+        .convert-btn:hover::before {
+            left: 100%;
+        }
+
+        .convert-btn:active {
+            transform: translateY(-2px) scale(1.01);
+            transition: all 0.1s;
+        }
+
+        .convert-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 0 5px 15px rgba(138, 43, 226, 0.3);
+        }
+
+        .convert-btn i {
+            font-size: 1.5rem;
+        }
+
+        .loading-screen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 2, 25, 0.98);
+            z-index: 200;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            text-align: center;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .loading-screen.active {
+            display: flex;
+            animation: fadeIn 0.6s ease;
+        }
+
+        .loader-title {
+            font-size: 3rem;
+            margin-bottom: 50px;
+            background: linear-gradient(90deg, #f0d5ff, #c28cff, #a45ee5);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 25px rgba(180, 120, 255, 0.6);
+            position: relative;
+        }
+
+        .loader-title::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 25%;
+            width: 50%;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #b478ff, transparent);
+            border-radius: 2px;
+        }
+
+        .loader-container {
+            width: 400px;
+            height: 12px;
+            background: rgba(60, 20, 100, 0.4);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 60px;
+            position: relative;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .loader-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #b478ff, #8a2be2, #b478ff);
+            border-radius: 10px;
+            transition: width 0.3s ease;
+            position: relative;
+            box-shadow: 0 0 20px rgba(180, 120, 255, 0.7);
+        }
+
+        .loader-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+            animation: shimmer 1.5s infinite;
+        }
+
+        .loader-dots {
+            display: flex;
+            gap: 25px;
+            margin-bottom: 60px;
+        }
+
+        .dot {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #a45ee5;
+            box-shadow: 0 0 20px rgba(164, 94, 229, 0.8);
+            animation: pulse 1.8s infinite ease-in-out;
+        }
+
+        .dot:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .dot:nth-child(2) {
+            animation-delay: 0.3s;
+        }
+
+        .dot:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+
+        .dot:nth-child(4) {
+            animation-delay: 0.9s;
+        }
+
+        .dot:nth-child(5) {
+            animation-delay: 1.2s;
+        }
+
+        .loader-text {
+            font-size: 1.5rem;
+            color: #d0b5f5;
+            margin-top: 20px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+            font-weight: 500;
+            min-height: 30px;
+        }
+
+        .result-section {
+            margin-top: 40px;
+            padding: 35px;
+            background: rgba(40, 10, 70, 0.3);
+            border-radius: 20px;
+            border: 2px solid rgba(180, 120, 255, 0.3);
+            display: none;
+            box-shadow: 
+                inset 0 0 30px rgba(0, 0, 0, 0.3),
+                0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .result-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #a45ee5, #8a2be2, #a45ee5);
+        }
+
+        .result-section.active {
+            display: block;
+            animation: slideUp 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .result-title {
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            color: #f0e6ff;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .result-title i {
+            color: #c28cff;
+            font-size: 2rem;
+        }
+
+        .result-code {
+            background: rgba(20, 5, 40, 0.8);
+            padding: 25px;
+            border-radius: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+            color: #f0e6ff;
+            border: 1px solid rgba(180, 120, 255, 0.4);
+            word-break: break-all;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+            position: relative;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+        }
+
+        .result-code::before {
+            content: 'loadstring';
+            position: absolute;
+            top: -10px;
+            left: 15px;
+            background: #1a0630;
+            padding: 0 10px;
+            font-size: 0.9rem;
+            color: #c28cff;
+            font-weight: bold;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: flex-end;
+        }
+
+        .copy-btn, .new-btn {
+            padding: 16px 32px;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: none;
+        }
+
+        .copy-btn {
+            background: linear-gradient(135deg, #5e35b1 0%, #4527a0 100%);
+            color: #e2d1ff;
+            border: 1px solid rgba(180, 120, 255, 0.5);
+            box-shadow: 0 8px 20px rgba(94, 53, 177, 0.4);
+        }
+
+        .copy-btn:hover {
+            background: linear-gradient(135deg, #673ab7 0%, #512da8 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(94, 53, 177, 0.5);
+        }
+
+        .new-btn {
+            background: linear-gradient(135deg, #8a2be2 0%, #6a1b9a 100%);
+            color: white;
+            box-shadow: 0 8px 20px rgba(138, 43, 226, 0.4);
+        }
+
+        .new-btn:hover {
+            background: linear-gradient(135deg, #9a4de8 0%, #7b1fa2 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(138, 43, 226, 0.5);
+        }
+
+        .footer {
+            padding: 25px;
+            text-align: center;
+            color: #b095d0;
+            font-size: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 2;
+            background: rgba(30, 10, 60, 0.2);
+        }
+
+        /* Animações */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { 
+                transform: scale(1); 
+                opacity: 0.7; 
+                box-shadow: 0 0 20px rgba(164, 94, 229, 0.8);
+            }
+            50% { 
+                transform: scale(1.4); 
+                opacity: 1; 
+                box-shadow: 0 0 30px rgba(164, 94, 229, 1);
+            }
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        @keyframes shine {
+            0% { left: -100%; }
+            20% { left: 100%; }
+            100% { left: 100%; }
+        }
+
+        /* Responsividade */
+        @media (max-width: 900px) {
+            .content {
+                padding: 40px 30px;
+            }
+            
+            .input-wrapper {
+                flex-direction: column;
+            }
+            
+            .convert-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .loader-title {
+                font-size: 2.5rem;
+            }
+            
+            .loader-container {
+                width: 300px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .copy-btn, .new-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .content {
+                padding: 30px 20px;
+            }
+            
+            .loader-title {
+                font-size: 2rem;
+            }
+            
+            .loader-container {
+                width: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Efeito de brilho neon -->
+        <div class="neon-glow"></div>
+        
+        <!-- Partículas decorativas -->
+        <div class="particles" id="particles"></div>
+        
+        <!-- Cabeçalho -->
+        <div class="header">
+            <h1><i class="fas fa-crown"></i> LOADSTRING CONVERTER</h1>
+            <p>Transforme qualquer link em loadstring com esta interface ULTRA FUCK detalhada em roxo claro premium</p>
+        </div>
+        
+        <!-- Conteúdo principal -->
+        <div class="content">
+            <div class="input-section">
+                <label class="input-label" for="linkInput">
+                    <i class="fas fa-paper-plane"></i> COLE SEU LINK AQUI:
+                </label>
+                <div class="input-wrapper">
+                    <input type="url" id="linkInput" class="input-field" placeholder="https://seusite.com/script.lua" required>
+                    <button id="convertBtn" class="convert-btn">
+                        <i class="fas fa-bolt-lightning"></i> CONVERTER AGORA
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Resultado -->
+            <div class="result-section" id="resultSection">
+                <h3 class="result-title">
+                    <i class="fas fa-terminal"></i> LOADSTRING GERADO:
+                </h3>
+                <div class="result-code" id="resultCode">
+                    <!-- Loadstring aparecerá aqui -->
+                </div>
+                <div class="action-buttons">
+                    <button id="copyBtn" class="copy-btn">
+                        <i class="far fa-copy"></i> COPIAR LOADSTRING
+                    </button>
+                    <button id="newBtn" class="new-btn">
+                        <i class="fas fa-rotate-right"></i> NOVA CONVERSÃO
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Rodapé -->
+        <div class="footer">
+            <p>LOADSTRING CONVERTER ULTRA FUCK © 2023 | GUI ROXA CLARO MEGA DETALHADA</p>
+        </div>
+    </div>
+    
+    <!-- Tela de carregamento -->
+    <div class="loading-screen" id="loadingScreen">
+        <h2 class="loader-title">CONVERTENDO SEU LINK...</h2>
+        
+        <div class="loader-dots">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+        
+        <div class="loader-container">
+            <div class="loader-bar" id="loaderBar"></div>
+        </div>
+        
+        <p class="loader-text" id="loaderText">Iniciando processo de conversão...</p>
+    </div>
+
+    <script>
+        // Criar partículas avançadas
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 50;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // Tamanho aleatório
+                const size = Math.random() * 15 + 5;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                // Posição aleatória
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                
+                // Opacidade aleatória
+                particle.style.opacity = Math.random() * 0.5 + 0.1;
+                
+                // Animação personalizada para cada partícula
+                const duration = Math.random() * 25 + 15;
+                const delay = Math.random() * 5;
+                const xMovement = Math.random() * 100 - 50;
+                const yMovement = Math.random() * 100 - 50;
+                
+                particle.style.animation = `float${i} ${duration}s ${delay}s infinite ease-in-out`;
+                
+                // Criar keyframes dinâmicos para cada partícula
+                const style = document.createElement('style');
+                style.textContent = `
+                    @keyframes float${i} {
+                        0%, 100% { 
+                            transform: translate(0, 0) rotate(0deg); 
+                        }
+                        25% { 
+                            transform: translate(${xMovement}px, ${yMovement}px) rotate(90deg); 
+                        }
+                        50% { 
+                            transform: translate(${xMovement * 0.5}px, ${yMovement * 1.5}px) rotate(180deg); 
+                        }
+                        75% { 
+                            transform: translate(${xMovement * 1.5}px, ${yMovement * 0.5}px) rotate(270deg); 
+                        }
+                    }
+                `;
+                document.head.appendChild(style);
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+        
+        // Elementos DOM
+        const linkInput = document.getElementById('linkInput');
+        const convertBtn = document.getElementById('convertBtn');
+        const loadingScreen = document.getElementById('loadingScreen');
+        const loaderBar = document.getElementById('loaderBar');
+        const loaderText = document.getElementById('loaderText');
+        const resultSection = document.getElementById('resultSection');
+        const resultCode = document.getElementById('resultCode');
+        const copyBtn = document.getElementById('copyBtn');
+        const newBtn = document.getElementById('newBtn');
+        
+        // Variáveis de controle
+        let isLoading = false;
+        let currentLoadString = '';
+        
+        // Criar partículas ao carregar a página
+        document.addEventListener('DOMContentLoaded', createParticles);
+        
+        // Mensagens de carregamento
+        const loadingMessages = [
+            "Validando link...",
+            "Processando script...",
+            "Otimizando código...",
+            "Gerando loadstring...",
+            "Aplicando criptografia...",
+            "Finalizando conversão..."
+        ];
+        
+        // Função para simular conversão
+        function simulateConversion(link) {
+            return new Promise((resolve) => {
+                let progress = 0;
+                let messageIndex = 0;
+                
+                // Mostrar primeira mensagem
+                loaderText.textContent = loadingMessages[messageIndex];
+                
+                const interval = setInterval(() => {
+                    progress += 1;
+                    loaderBar.style.width = `${progress}%`;
+                    
+                    // Mudar mensagem a cada 17% de progresso
+                    if (progress % 17 === 0 && messageIndex < loadingMessages.length - 1) {
+                        messageIndex++;
+                        loaderText.textContent = loadingMessages[messageIndex];
+                    }
+                    
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        // Última mensagem
+                        loaderText.textContent = "Conversão concluída com sucesso!";
+                        setTimeout(resolve, 300);
+                    }
+                }, 60); // 6 segundos no total
+            });
+        }
+        
+        // Função para gerar loadstring
+        function generateLoadString(link) {
+            // Verificar se o link já tem http/https
+            const cleanLink = link.trim();
+            return `loadstring(game:HttpGet("${cleanLink}", true))()`;
+        }
+        
+        // Evento de clique no botão converter
+        convertBtn.addEventListener('click', async () => {
+            const link = linkInput.value.trim();
+            
+            // Validação
+            if (!link) {
+                showNotification("Por favor, insira um link válido!", "error");
+                linkInput.focus();
+                return;
+            }
+            
+            if (!link.startsWith('http://') && !link.startsWith('https://')) {
+                showNotification("O link deve começar com http:// ou https://", "error");
+                linkInput.focus();
+                return;
+            }
+            
+            // Iniciar processo de conversão
+            isLoading = true;
+            convertBtn.disabled = true;
+            convertBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> CONVERTENDO...';
+            
+            // Mostrar tela de carregamento
+            loadingScreen.classList.add('active');
+            
+            // Simular conversão (6 segundos)
+            await simulateConversion(link);
+            
+            // Pequeno delay antes de esconder
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            // Esconder tela de carregamento
+            loadingScreen.classList.remove('active');
+            
+            // Gerar e mostrar resultado
+            currentLoadString = generateLoadString(link);
+            resultCode.textContent = currentLoadString;
+            resultSection.classList.add('active');
+            
+            // Resetar botão
+            convertBtn.disabled = false;
+            convertBtn.innerHTML = '<i class="fas fa-bolt-lightning"></i> CONVERTER AGORA';
+            isLoading = false;
+            
+            // Rolar para resultado
+            resultSection.scrollIntoView({ behavior: 'smooth' });
+            
+            // Mostrar notificação de sucesso
+            showNotification("Loadstring gerado com sucesso!", "success");
+        });
+        
+        // Evento de clique no botão copiar
+        copyBtn.addEventListener('click', () => {
+            if (!currentLoadString) return;
+            
+            // Usar a API de área de transferência
+            navigator.clipboard.writeText(currentLoadString)
+                .then(() => {
+                    // Feedback visual
+                    const originalText = copyBtn.innerHTML;
+                    copyBtn.innerHTML = '<i class="fas fa-check"></i> COPIADO!';
+                    copyBtn.style.background = 'linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%)';
+                    
+                    // Notificação
+                    showNotification("Loadstring copiado para a área de transferência!", "success");
+                    
+                    setTimeout(() => {
+                        copyBtn.innerHTML = originalText;
+                        copyBtn.style.background = '';
+                    }, 2000);
+                })
+                .catch(err => {
+                    console.error('Erro ao copiar: ', err);
+                    
+                    // Fallback para navegadores antigos
+                    const textArea = document.createElement('textarea');
+                    textArea.value = currentLoadString;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    
+                    showNotification("Copiado usando método alternativo!", "success");
+                });
+        });
+        
+        // Evento de clique no botão nova conversão
+        newBtn.addEventListener('click', () => {
+            linkInput.value = '';
+            resultSection.classList.remove('active');
+            linkInput.focus();
+            showNotification("Pronto para nova conversão!", "info");
+        });
+        
+        // Permitir converter com Enter
+        linkInput.addEventListener('keyup', (event) => {
+            if (event.key === 'Enter' && !isLoading) {
+                convertBtn.click();
+            }
+        });
+        
+        // Função para mostrar notificações
+        function showNotification(message, type) {
+            // Criar elemento de notificação
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 30px;
+                right: 30px;
+                padding: 18px 25px;
+                border-radius: 12px;
+                color: white;
+                font-weight: 600;
+                z-index: 1000;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                transform: translateX(150%);
+                transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            `;
+            
+            // Cor baseada no tipo
+            if (type === 'success') {
+                notification.style.background = 'linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%)';
+                notification.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
+            } else if (type === 'error') {
+                notification.style.background = 'linear-gradient(135deg, #f44336 0%, #c62828 100%)';
+                notification.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
+            } else {
+                notification.style.background = 'linear-gradient(135deg, #2196F3 0%, #0D47A1 100%)';
+                notification.innerHTML = `<i class="fas fa-info-circle"></i> ${message}`;
+            }
+            
+            document.body.appendChild(notification);
+            
+            // Animar entrada
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 10);
+            
+            // Remover após 4 segundos
+            setTimeout(() => {
+                notification.style.transform = 'translateX(150%)';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 500);
+            }, 4000);
+        }
+        
+        // Focar no campo de input ao carregar a página
+        window.onload = function() {
+            linkInput.focus();
+        };
+    </script>
+</body>
+</html>
