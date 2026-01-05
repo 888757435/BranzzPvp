@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scripts do Branzz - Downloads</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --roxo-escuro: #2a0b42;
+            --roxo-medio: #6a0dad;
+            --roxo-claro: #9d4edd;
+            --roxo-brilhante: #c77dff;
+            --roxo-suave: #e0aaff;
+            --gradiente-roxo: linear-gradient(135deg, var(--roxo-escuro) 0%, var(--roxo-medio) 50%, var(--roxo-claro) 100%);
+        }
+
+        body {
+            background-color: #0d0218;
+            color: #f0e6ff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(106, 13, 173, 0.15) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(157, 78, 221, 0.1) 0%, transparent 20%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Cabeçalho com animação */
+        header {
+            text-align: center;
+            padding: 40px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .titulo-principal {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(to right, var(--roxo-suave), var(--roxo-brilhante), var(--roxo-suave));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 15px;
+            text-shadow: 0 0 15px rgba(199, 125, 255, 0.5);
+            animation: brilho-texto 3s infinite alternate;
+        }
+
+        @keyframes brilho-texto {
+            0% { text-shadow: 0 0 15px rgba(199, 125, 255, 0.5); }
+            100% { text-shadow: 0 0 25px rgba(199, 125, 255, 0.8), 0 0 35px rgba(157, 78, 221, 0.6); }
+        }
+
+        .subtitulo {
+            font-size: 1.2rem;
+            color: var(--roxo-suave);
+            margin-bottom: 40px;
+            letter-spacing: 1px;
+        }
+
+        /* Cartões de download */
+        .downloads-container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .cartao-download {
+            background: rgba(42, 11, 66, 0.7);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--roxo-claro);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.4s, box-shadow 0.4s;
+            animation: aparecer 0.8s ease-out forwards;
+            opacity: 0;
+        }
+
+        .cartao-download:nth-child(1) { animation-delay: 0.2s; }
+        .cartao-download:nth-child(2) { animation-delay: 0.4s; }
+        .cartao-download:nth-child(3) { animation-delay: 0.6s; }
+
+        @keyframes aparecer {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .cartao-download:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(157, 78, 221, 0.3);
+        }
+
+        .cartao-download::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--gradiente-roxo);
+        }
+
+        .cartao-download::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(199, 125, 255, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.5s;
+            z-index: 0;
+        }
+
+        .cartao-download:hover::after {
+            opacity: 1;
+        }
+
+        .nome-download {
+            font-size: 2rem;
+            color: var(--roxo-brilhante);
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .nome-download i {
+            font-size: 1.8rem;
+            color: var(--roxo-suave);
+        }
+
+        .descricao-download {
+            color: #d0b6ff;
+            margin-bottom: 25px;
+            line-height: 1.6;
+            position: relative;
+            z-index: 1;
+        }
+
+        .botoes-container {
+            display: flex;
+            gap: 20px;
+            position: relative;
+            z-index: 1;
+            flex-wrap: wrap;
+        }
+
+        .botao {
+            padding: 14px 28px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s;
+            border: none;
+            text-decoration: none;
+        }
+
+        .botao-download {
+            background: var(--gradiente-roxo);
+            color: white;
+            box-shadow: 0 5px 15px rgba(106, 13, 173, 0.4);
+        }
+
+        .botao-download:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(106, 13, 173, 0.6);
+        }
+
+        .botao-link {
+            background: transparent;
+            color: var(--roxo-brilhante);
+            border: 2px solid var(--roxo-claro);
+        }
+
+        .botao-link:hover {
+            background: rgba(157, 78, 221, 0.1);
+            transform: translateY(-3px);
+        }
+
+        /* Rodapé */
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            border-top: 1px solid rgba(157, 78, 221, 0.2);
+            margin-top: 30px;
+            color: var(--roxo-suave);
+        }
+
+        .aviso {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 10px;
+        }
+
+        /* Partículas animadas */
+        .particulas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particula {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(157, 78, 221, 0.2);
+            animation: flutuar linear infinite;
+        }
+
+        @keyframes flutuar {
+            0% { transform: translateY(100vh) rotate(0deg); }
+            100% { transform: translateY(-100px) rotate(360deg); }
+        }
+
+        /* Efeitos responsivos */
+        @media (max-width: 768px) {
+            .titulo-principal {
+                font-size: 2.5rem;
+            }
+            
+            .cartao-download {
+                padding: 20px;
+            }
+            
+            .nome-download {
+                font-size: 1.7rem;
+            }
+            
+            .botoes-container {
+                flex-direction: column;
+            }
+            
+            .botao {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Animação de carregamento */
+        .carregando {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(13, 2, 24, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .spinner {
+            width: 80px;
+            height: 80px;
+            border: 5px solid rgba(157, 78, 221, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--roxo-brilhante);
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .mensagem-download {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--gradiente-roxo);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            display: none;
+            z-index: 1001;
+            animation: aparecer-mensagem 0.3s ease-out;
+        }
+
+        @keyframes aparecer-mensagem {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Partículas animadas -->
+    <div class="particulas" id="particulas"></div>
+    
+    <!-- Overlay de carregamento -->
+    <div class="carregando" id="carregando">
+        <div class="spinner"></div>
+        <h3>Iniciando download...</h3>
+    </div>
+    
+    <!-- Mensagem de download -->
+    <div class="mensagem-download" id="mensagemDownload">
+        <i class="fas fa-check-circle"></i> Download iniciado!
+    </div>
+    
+    <div class="container">
+        <header>
+            <h1 class="titulo-principal">SCRIPTS DO BRANZZ</h1>
+            <p class="subtitulo">Downloads exclusivos com as melhores ferramentas</p>
+        </header>
+        
+        <main class="downloads-container">
+            <!-- Primeiro download -->
+            <div class="cartao-download">
+                <h2 class="nome-download">
+                    <i class="fas fa-code"></i> Scripts do Branzz
+                </h2>
+                <p class="descricao-download">
+                    Pacote completo de scripts para diversas finalidades. Inclui utilitários, automações e ferramentas especiais desenvolvidas pela comunidade.
+                </p>
+                <div class="botoes-container">
+                    <button class="botao botao-download" onclick="iniciarDownload('https://www.mediafire.com/folder/bstl6g0gxw2g1/Arquivos+scripts', 'Scripts_do_Branzz.zip')">
+                        <i class="fas fa-download"></i> Download
+                    </button>
+                    <a href="https://www.mediafire.com/folder/bstl6g0gxw2g1/Arquivos+scripts" target="_blank" class="botao botao-link">
+                        <i class="fas fa-external-link-alt"></i> Abrir Link
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Segundo download -->
+            <div class="cartao-download">
+                <h2 class="nome-download">
+                    <i class="fas fa-robot"></i> Delta 32 Bits
+                </h2>
+                <p class="descricao-download">
+                    Delta Super Lite 32B V702 - Versão otimizada para dispositivos de 32 bits. Aplicativo leve com funcionalidades avançadas.
+                </p>
+                <div class="botoes-container">
+                    <button class="botao botao-download" onclick="iniciarDownload('https://www.mediafire.com/file/53z99b9xureyzix/Delta_Super_Lite_32B_V702.apk/file?dkey=o1n39ugggpd&r=674', 'Delta_Super_Lite_32B_V702.apk')">
+                        <i class="fas fa-download"></i> Download
+                    </button>
+                    <a href="https://www.mediafire.com/file/53z99b9xureyzix/Delta_Super_Lite_32B_V702.apk/file?dkey=o1n39ugggpd&r=674" target="_blank" class="botao botao-link">
+                        <i class="fas fa-external-link-alt"></i> Abrir Link
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Terceiro download -->
+            <div class="cartao-download">
+                <h2 class="nome-download">
+                    <i class="fas fa-images"></i> Meus e-mails e fotos
+                </h2>
+                <p class="descricao-download">
+                    Coleção de texturas e contas do Gmail para uso em diversos projetos. Inclui materiais exclusivos e recursos visuais.
+                </p>
+                <div class="botoes-container">
+                    <button class="botao botao-download" onclick="iniciarDownload('https://www.mediafire.com/folder/ic15cd3vu989s/Texturas+e+contas+do+gmail', 'Texturas_e_contas.zip')">
+                        <i class="fas fa-download"></i> Download
+                    </button>
+                    <a href="https://www.mediafire.com/folder/ic15cd3vu989s/Texturas+e+contas+do+gmail" target="_blank" class="botao botao-link">
+                        <i class="fas fa-external-link-alt"></i> Abrir Link
+                    </a>
+                </div>
+            </div>
+        </main>
+        
+        <footer>
+            <p>© 2023 Scripts do Branzz - Todos os direitos reservados</p>
+            <p class="aviso">Use os arquivos com responsabilidade. Não nos responsabilizamos por mal uso.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Criar partículas animadas
+        function criarParticulas() {
+            const particulasContainer = document.getElementById('particulas');
+            const cores = ['#9d4edd', '#c77dff', '#e0aaff', '#6a0dad'];
+            
+            for (let i = 0; i < 40; i++) {
+                const particula = document.createElement('div');
+                particula.classList.add('particula');
+                
+                // Tamanho aleatório
+                const tamanho = Math.random() * 10 + 5;
+                particula.style.width = `${tamanho}px`;
+                particula.style.height = `${tamanho}px`;
+                
+                // Posição aleatória
+                particula.style.left = `${Math.random() * 100}%`;
+                
+                // Cor aleatória
+                const cor = cores[Math.floor(Math.random() * cores.length)];
+                particula.style.background = cor;
+                
+                // Duração e atraso de animação aleatórios
+                const duracao = Math.random() * 20 + 10;
+                const atraso = Math.random() * 5;
+                particula.style.animationDuration = `${duracao}s`;
+                particula.style.animationDelay = `${atraso}s`;
+                
+                // Opacidade aleatória
+                particula.style.opacity = Math.random() * 0.5 + 0.1;
+                
+                particulasContainer.appendChild(particula);
+            }
+        }
+        
+        // Função para simular o download
+        function iniciarDownload(url, nomeArquivo) {
+            const carregando = document.getElementById('carregando');
+            const mensagem = document.getElementById('mensagemDownload');
+            
+            // Mostrar tela de carregamento
+            carregando.style.display = 'flex';
+            
+            // Simular tempo de processamento do download
+            setTimeout(() => {
+                // Ocultar tela de carregamento
+                carregando.style.display = 'none';
+                
+                // Mostrar mensagem de sucesso
+                mensagem.style.display = 'block';
+                
+                // Iniciar o download (abordagem para links do MediaFire)
+                // Para links diretos, usaríamos um link <a> com download attribute
+                // Para o MediaFire, redirecionamos para a página
+                window.open(url, '_blank');
+                
+                // Ocultar mensagem após 3 segundos
+                setTimeout(() => {
+                    mensagem.style.display = 'none';
+                }, 3000);
+            }, 1500);
+        }
+        
+        // Adicionar efeito de digitação ao título principal
+        function efeitoDigitacao() {
+            const titulo = document.querySelector('.titulo-principal');
+            const textoOriginal = titulo.textContent;
+            titulo.textContent = '';
+            
+            let i = 0;
+            function digitar() {
+                if (i < textoOriginal.length) {
+                    titulo.textContent += textoOriginal.charAt(i);
+                    i++;
+                    setTimeout(digitar, 50);
+                }
+            }
+            
+            setTimeout(digitar, 500);
+        }
+        
+        // Inicializar quando a página carregar
+        document.addEventListener('DOMContentLoaded', function() {
+            criarParticulas();
+            efeitoDigitacao();
+            
+            // Adicionar efeito de hover nos cartões
+            const cartoes = document.querySelectorAll('.cartao-download');
+            cartoes.forEach(cartao => {
+                cartao.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-10px)';
+                });
+                
+                cartao.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
