@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Links Branzz | Portal de Ferramentas</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+        }
+
+        :root {
+            --primary-dark: #0a0a1a;
+            --secondary-dark: #14142e;
+            --accent-purple: #8a2be2;
+            --neon-purple: #9d4edd;
+            --electric-blue: #4361ee;
+            --neon-pink: #f72585;
+            --glow-purple: #c77dff;
+            --glow-blue: #4cc9f0;
+            --text-light: #f8f9fa;
+            --text-glow: rgba(199, 125, 255, 0.8);
+        }
+
+        body {
+            background-color: var(--primary-dark);
+            color: var(--text-light);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Efeito de partículas no fundo */
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+        }
+
+        /* Gradiente animado no fundo */
+        .gradient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(61, 9, 121, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(67, 97, 238, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(247, 37, 133, 0.2) 0%, transparent 50%);
+            z-index: -1;
+            animation: gradient-shift 15s ease infinite alternate;
+        }
+
+        @keyframes gradient-shift {
+            0% {
+                transform: scale(1) rotate(0deg);
+            }
+            100% {
+                transform: scale(1.1) rotate(1deg);
+            }
+        }
+
+        /* Container principal */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Cabeçalho com efeitos especiais */
+        header {
+            text-align: center;
+            padding: 60px 0 40px;
+            position: relative;
+        }
+
+        .title-container {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .main-title {
+            font-size: 4.5rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--accent-purple), var(--electric-blue), var(--neon-pink), var(--glow-blue));
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            animation: gradient-flow 6s ease infinite, pulse 3s infinite alternate;
+            text-transform: uppercase;
+            position: relative;
+            z-index: 2;
+            text-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes gradient-flow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.02); }
+        }
+
+        .title-glow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, var(--accent-purple), var(--electric-blue), var(--neon-pink));
+            filter: blur(20px);
+            opacity: 0.5;
+            z-index: 1;
+            animation: glow-move 8s ease infinite alternate;
+        }
+
+        @keyframes glow-move {
+            0% { transform: translateX(-10px) translateY(-10px); }
+            100% { transform: translateX(10px) translateY(10px); }
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: var(--glow-blue);
+            max-width: 600px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+            text-shadow: 0 0 10px rgba(76, 201, 240, 0.5);
+            animation: fadeInUp 1s ease 0.5s both;
+        }
+
+        /* Grid de cards */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 40px;
+            margin: 60px 0;
+        }
+
+        @media (max-width: 768px) {
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Cards estilizados */
+        .card {
+            background: linear-gradient(145deg, rgba(20, 20, 46, 0.9), rgba(10, 10, 26, 0.9));
+            border-radius: 25px;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 
+                0 15px 35px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(138, 43, 226, 0.2);
+            animation: cardFloat 6s ease-in-out infinite;
+        }
+
+        .card:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .card:nth-child(2) {
+            animation-delay: 0.3s;
+        }
+
+        @keyframes cardFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--accent-purple), var(--electric-blue), var(--neon-pink));
+        }
+
+        .card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(157, 78, 221, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.8s;
+            z-index: 1;
+        }
+
+        .card:hover {
+            transform: translateY(-20px) scale(1.02);
+            box-shadow: 
+                0 25px 50px rgba(138, 43, 226, 0.3),
+                0 0 80px rgba(67, 97, 238, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            border-color: rgba(138, 43, 226, 0.4);
+        }
+
+        .card:hover::after {
+            opacity: 1;
+        }
+
+        .card-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .card-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--electric-blue));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 25px;
+            font-size: 2rem;
+            box-shadow: 0 10px 20px rgba(138, 43, 226, 0.4);
+            animation: iconFloat 4s ease-in-out infinite;
+        }
+
+        @keyframes iconFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
+        }
+
+        .card-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--glow-purple), var(--glow-blue));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1.2;
+        }
+
+        .card-description {
+            color: rgba(248, 249, 250, 0.8);
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 35px;
+            padding-left: 10px;
+            border-left: 3px solid var(--electric-blue);
+            padding-left: 20px;
+        }
+
+        /* Botão estilizado */
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .open-link-btn {
+            position: relative;
+            padding: 20px 50px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--electric-blue), var(--neon-pink));
+            background-size: 200% 200%;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            transition: all 0.4s ease;
+            box-shadow: 
+                0 10px 30px rgba(138, 43, 226, 0.4),
+                0 0 20px rgba(67, 97, 238, 0.3);
+            overflow: hidden;
+            z-index: 1;
+            animation: btnGlow 3s infinite alternate;
+        }
+
+        @keyframes btnGlow {
+            0% { box-shadow: 0 10px 30px rgba(138, 43, 226, 0.4), 0 0 20px rgba(67, 97, 238, 0.3); }
+            100% { box-shadow: 0 10px 40px rgba(138, 43, 226, 0.6), 0 0 30px rgba(67, 97, 238, 0.5), 0 0 40px rgba(247, 37, 133, 0.3); }
+        }
+
+        .open-link-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.7s ease;
+            z-index: -1;
+        }
+
+        .open-link-btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            background-position: right center;
+            letter-spacing: 1.5px;
+        }
+
+        .open-link-btn:hover::before {
+            left: 100%;
+        }
+
+        .open-link-btn:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        .btn-icon {
+            font-size: 1.5rem;
+            animation: iconSpin 3s linear infinite;
+        }
+
+        @keyframes iconSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Rodapé */
+        footer {
+            text-align: center;
+            padding: 40px 0;
+            margin-top: 80px;
+            position: relative;
+        }
+
+        .footer-text {
+            color: rgba(248, 249, 250, 0.6);
+            font-size: 1rem;
+            letter-spacing: 1px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .footer-text::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent-purple), transparent);
+        }
+
+        /* Efeitos de entrada */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card {
+            animation: fadeInUp 1s ease forwards;
+            opacity: 0;
+        }
+
+        .card:nth-child(1) {
+            animation-delay: 0.2s;
+        }
+
+        .card:nth-child(2) {
+            animation-delay: 0.4s;
+        }
+
+        /* Linhas de conexão animadas */
+        .connection-line {
+            position: absolute;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--electric-blue), transparent);
+            top: 50%;
+            left: 0;
+            opacity: 0.3;
+            z-index: -1;
+        }
+
+        /* Responsividade */
+        @media (max-width: 1200px) {
+            .main-title {
+                font-size: 3.5rem;
+            }
+            
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .main-title {
+                font-size: 2.8rem;
+            }
+            
+            .card {
+                padding: 30px 25px;
+            }
+            
+            .card-title {
+                font-size: 2rem;
+            }
+            
+            .open-link-btn {
+                padding: 18px 40px;
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-title {
+                font-size: 2.2rem;
+            }
+            
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .card-icon {
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Partículas no fundo -->
+    <div id="particles-js"></div>
+    
+    <!-- Gradiente animado -->
+    <div class="gradient-bg"></div>
+    
+    <!-- Linha de conexão -->
+    <div class="connection-line"></div>
+    
+    <div class="container">
+        <header>
+            <div class="title-container">
+                <div class="title-glow"></div>
+                <h1 class="main-title">Links Branzz</h1>
+            </div>
+            <p class="subtitle">Portal de ferramentas e utilitários exclusivos. Acesso rápido aos recursos mais poderosos.</p>
+        </header>
+        
+        <main>
+            <div class="cards-grid">
+                <!-- Card 1: Links Branzz -->
+                <div class="card">
+                    <div class="card-content">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-download"></i>
+                            </div>
+                            <h2 class="card-title">Links Branzz</h2>
+                        </div>
+                        
+                        <p class="card-description">
+                            Acesso completo aos arquivos e scripts mais recentes. Repositório atualizado com ferramentas de automação, utilitários e recursos exclusivos para otimização de performance.
+                        </p>
+                        
+                        <div class="btn-container">
+                            <a href="https://html-preview.github.io/?url=https://raw.githubusercontent.com/888757435/BranzzPvp/refs/heads/main/DownloadMyFiles" target="_blank" class="open-link-btn">
+                                <i class="fas fa-external-link-alt btn-icon"></i>
+                                <span>Abrir Link</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Card 2: Convert loadstring -->
+                <div class="card">
+                    <div class="card-content">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-code"></i>
+                            </div>
+                            <h2 class="card-title">Convert Loadstring</h2>
+                        </div>
+                        
+                        <p class="card-description">
+                            Ferramenta avançada para conversão de scripts. Transforme qualquer código em loadstring formatado, com suporte a múltiplas linguagens e otimização automática de performance.
+                        </p>
+                        
+                        <div class="btn-container">
+                            <a href="https://html-preview.github.io/?url=https://raw.githubusercontent.com/888757435/BranzzPvp/refs/heads/main/Convert%20to%20loadstring.html" target="_blank" class="open-link-btn">
+                                <i class="fas fa-external-link-alt btn-icon"></i>
+                                <span>Abrir Link</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <footer>
+            <p class="footer-text">© 2023 Links Branzz | Todos os direitos reservados</p>
+        </footer>
+    </div>
+    
+    <!-- Script das partículas -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    
+    <script>
+        // Inicializar partículas
+        particlesJS("particles-js", {
+            particles: {
+                number: { value: 80, density: { enable: true, value_area: 800 } },
+                color: { value: ["#8a2be2", "#4361ee", "#9d4edd", "#c77dff"] },
+                shape: { type: "circle" },
+                opacity: { value: 0.5, random: true },
+                size: { value: 3, random: true },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: "#8a2be2",
+                    opacity: 0.2,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: 2,
+                    direction: "none",
+                    random: true,
+                    straight: false,
+                    out_mode: "out",
+                    bounce: false
+                }
+            },
+            interactivity: {
+                detect_on: "canvas",
+                events: {
+                    onhover: { enable: true, mode: "repulse" },
+                    onclick: { enable: true, mode: "push" },
+                    resize: true
+                }
+            },
+            retina_detect: true
+        });
+        
+        // Efeito de digitação no título
+        function typeWriterEffect() {
+            const title = document.querySelector('.main-title');
+            const originalText = title.textContent;
+            title.textContent = '';
+            
+            let i = 0;
+            function type() {
+                if (i < originalText.length) {
+                    title.textContent += originalText.charAt(i);
+                    i++;
+                    setTimeout(type, 100);
+                }
+            }
+            
+            setTimeout(type, 800);
+        }
+        
+        // Efeito de brilho nos cards ao passar o mouse
+        function addCardHoverEffect() {
+            const cards = document.querySelectorAll('.card');
+            
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function(e) {
+                    const rect = this.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    const spotlight = document.createElement('div');
+                    spotlight.style.position = 'absolute';
+                    spotlight.style.width = '200px';
+                    spotlight.style.height = '200px';
+                    spotlight.style.background = 'radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%)';
+                    spotlight.style.borderRadius = '50%';
+                    spotlight.style.top = y - 100 + 'px';
+                    spotlight.style.left = x - 100 + 'px';
+                    spotlight.style.pointerEvents = 'none';
+                    spotlight.style.zIndex = '1';
+                    spotlight.style.transition = 'all 0.3s ease';
+                    
+                    this.appendChild(spotlight);
+                    
+                    setTimeout(() => {
+                        if (spotlight.parentNode === this) {
+                            this.removeChild(spotlight);
+                        }
+                    }, 500);
+                });
+            });
+        }
+        
+        // Efeito de onda no botão
+        function addRippleEffect() {
+            const buttons = document.querySelectorAll('.open-link-btn');
+            
+            buttons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    const ripple = document.createElement('span');
+                    const rect = this.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    const x = e.clientX - rect.left - size / 2;
+                    const y = e.clientY - rect.top - size / 2;
+                    
+                    ripple.style.position = 'absolute';
+                    ripple.style.borderRadius = '50%';
+                    ripple.style.background = 'rgba(255, 255, 255, 0.3)';
+                    ripple.style.transform = 'scale(0)';
+                    ripple.style.animation = 'ripple 0.6s linear';
+                    ripple.style.left = x + 'px';
+                    ripple.style.top = y + 'px';
+                    ripple.style.width = size + 'px';
+                    ripple.style.height = size + 'px';
+                    ripple.style.pointerEvents = 'none';
+                    
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        if (ripple.parentNode === this) {
+                            this.removeChild(ripple);
+                        }
+                    }, 600);
+                });
+            });
+            
+            // Adicionar animação de ripple
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes ripple {
+                    to {
+                        transform: scale(4);
+                        opacity: 0;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        // Efeito de entrada das seções
+        function scrollReveal() {
+            const cards = document.querySelectorAll('.card');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            cards.forEach(card => {
+                observer.observe(card);
+            });
+        }
+        
+        // Inicializar efeitos quando a página carregar
+        document.addEventListener('DOMContentLoaded', function() {
+            typeWriterEffect();
+            addCardHoverEffect();
+            addRippleEffect();
+            scrollReveal();
+            
+            // Adicionar efeito sonoro (opcional)
+            const buttons = document.querySelectorAll('.open-link-btn');
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Criar um som de clique suave
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    oscillator.frequency.value = 800;
+                    oscillator.type = 'sine';
+                    
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                    
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.1);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
